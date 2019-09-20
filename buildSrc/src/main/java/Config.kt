@@ -2,10 +2,10 @@ import org.gradle.api.JavaVersion
 
 object Config {
     // Android config
-    const val androidBuildTools = "28.0.3"
+    const val androidBuildTools = "29.0.2"
     const val androidMinSdk = 15
-    const val androidTargetSdk = 28
-    const val androidCompileSdk = 28
+    const val androidTargetSdk = 29
+    const val androidCompileSdk = 29
     const val applicationId = "com.example.cxensesdk"
     const val versionCode = 1
     const val versionName = "1.0"
@@ -19,16 +19,16 @@ object Config {
 }
 
 object Versions {
-    const val kotlin = "1.3.31"
+    const val kotlin = "1.3.50"
     //Plugins
-    const val buildScanPlugin = "2.3"
-    const val versionsPlugin = "0.21.0"
-    const val androidToolsPlugin = "3.4.1"
+    const val buildScanPlugin = "2.4.2"
+    const val versionsPlugin = "0.25.0"
+    const val androidToolsPlugin = "3.5.0"
     // Android libraries
-    const val compatLibrary = "1.0.2"
+    const val compatLibrary = "1.1.0"
     const val materialLibrary = "1.0.0"
 
-    const val cxenseSdk = "1.6.0"
+    const val cxenseSdk = "1.7.1"
 
 }
 

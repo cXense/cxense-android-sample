@@ -20,7 +20,7 @@ buildscript {
 
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    setTermsOfServiceAgree("yes")
+    termsOfServiceAgree = "yes"
 }
 
 allprojects {

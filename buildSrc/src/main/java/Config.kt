@@ -29,7 +29,7 @@ object Versions {
     const val materialLibrary = "1.0.0"
 
     const val cxenseSdk = "1.7.1"
-
+    const val rxJava = "2.2.12"
 }
 
 object Plugins {
@@ -37,6 +37,7 @@ object Plugins {
     const val buildScan = "com.gradle.build-scan"
     const val versions = "com.github.ben-manes.versions"
     const val androidTools = "com.android.tools.build:gradle:${Versions.androidToolsPlugin}"
+    const val androidLibrary = "com.android.library"
     const val androidApp = "com.android.application"
     const val kotlinAndroidApp = "kotlin-android"
     const val kotlinAndroidExtApp = "kotlin-android-extensions"
@@ -47,4 +48,5 @@ object Libs {
     const val appcompat = "androidx.appcompat:appcompat:${Versions.compatLibrary}"
     const val material = "com.google.android.material:material:${Versions.materialLibrary}"
     const val cxenseSdk = "com.cxpublic:cxense-android:${Versions.cxenseSdk}"
+    const val rxJava = "io.reactivex.rxjava2:rxjava:${Versions.rxJava}"
 }

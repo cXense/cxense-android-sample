@@ -2,7 +2,6 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id(Plugins.versions) version Versions.versionsPlugin
-    id(Plugins.buildScan) version Versions.buildScanPlugin
 }
 
 buildscript {

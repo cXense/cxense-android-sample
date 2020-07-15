@@ -20,5 +20,5 @@ android {
 dependencies {
     implementation(kotlin(Libs.kotlinStdlib, Versions.kotlin))
     implementation(Libs.cxenseSdk)
-    implementation(Libs.rxJava)
+    implementation(Libs.kotlinCoroutines)
 }

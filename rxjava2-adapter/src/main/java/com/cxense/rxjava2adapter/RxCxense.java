@@ -3,18 +3,19 @@ package com.cxense.rxjava2adapter;
 import androidx.annotation.NonNull;
 
 import com.cxense.cxensesdk.CxenseConfiguration;
-import com.cxense.cxensesdk.CxenseConstants;
 import com.cxense.cxensesdk.CxenseSdk;
-import com.cxense.cxensesdk.EventStatus;
 import com.cxense.cxensesdk.LoadCallback;
-import com.cxense.cxensesdk.QueueStatus;
 import com.cxense.cxensesdk.model.ContentUser;
 import com.cxense.cxensesdk.model.Event;
+import com.cxense.cxensesdk.model.EventStatus;
+import com.cxense.cxensesdk.model.QueueStatus;
 import com.cxense.cxensesdk.model.User;
 import com.cxense.cxensesdk.model.UserExternalData;
 import com.cxense.cxensesdk.model.UserIdentity;
 import com.cxense.cxensesdk.model.WidgetContext;
 import com.cxense.cxensesdk.model.WidgetItem;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,15 +33,15 @@ public class RxCxense {
     @SuppressWarnings({"UnusedDeclaration", "WeakerAccess"}) // Public API.
     @NonNull
     public static Completable trackClick(@NonNull String url) {
-        return Completable.create(emitter -> CxenseSdk.getInstance().trackClick(url, new LoadCallback() {
+        return Completable.create(emitter -> CxenseSdk.getInstance().trackClick(url, new LoadCallback<Void>() {
             @Override
-            public void onSuccess(Object data) {
+            public void onSuccess(@NotNull Void data) {
                 emitter.onComplete();
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -54,15 +55,15 @@ public class RxCxense {
     @SuppressWarnings({"UnusedDeclaration", "WeakerAccess"}) // Public API.
     @NonNull
     public static Completable trackClick(@NonNull WidgetItem item) {
-        return Completable.create(emitter -> CxenseSdk.getInstance().trackClick(item, new LoadCallback() {
+        return Completable.create(emitter -> CxenseSdk.getInstance().trackClick(item, new LoadCallback<Void>() {
             @Override
-            public void onSuccess(Object data) {
+            public void onSuccess(@NotNull Void data) {
                 emitter.onComplete();
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -79,13 +80,13 @@ public class RxCxense {
     public static Single<List<WidgetItem>> loadWidgetRecommendations(final String widgetId, final WidgetContext widgetContext) {
         return Single.create(emitter -> CxenseSdk.getInstance().loadWidgetRecommendations(widgetId, widgetContext, new LoadCallback<List<WidgetItem>>() {
             @Override
-            public void onSuccess(List<WidgetItem> data) {
+            public void onSuccess(@NotNull List<WidgetItem> data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -101,13 +102,13 @@ public class RxCxense {
     public static Single<List<WidgetItem>> loadWidgetRecommendations(final String widgetId, final WidgetContext widgetContext, ContentUser user, String tag, String prnd) {
         return Single.create(emitter -> CxenseSdk.getInstance().loadWidgetRecommendations(widgetId, widgetContext, user, tag, prnd, new LoadCallback<List<WidgetItem>>() {
             @Override
-            public void onSuccess(List<WidgetItem> data) {
+            public void onSuccess(@NotNull List<WidgetItem> data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -160,7 +161,7 @@ public class RxCxense {
     @SuppressWarnings({"UnusedDeclaration", "WeakerAccess"}) // Public API.
     @NonNull
     public static Single<Boolean> isLimitAdTrackingEnabled() {
-        return Single.fromCallable(() -> CxenseSdk.getInstance().isLimitAdTrackingEnabled());
+        return Single.fromCallable(() -> CxenseSdk.getInstance().getLimitAdTrackingEnabled());
     }
 
     /**
@@ -186,13 +187,13 @@ public class RxCxense {
     public static Single<List<String>> getUserSegmentIds(@NonNull List<UserIdentity> identities, @NonNull List<String> siteGroupIds) {
         return Single.create(emitter -> CxenseSdk.getInstance().getUserSegmentIds(identities, siteGroupIds, new LoadCallback<List<String>>() {
             @Override
-            public void onSuccess(List<String> data) {
+            public void onSuccess(@NotNull List<String> data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -208,13 +209,13 @@ public class RxCxense {
     public static Single<User> getUser(@NonNull UserIdentity identity) {
         return Single.create(emitter -> CxenseSdk.getInstance().getUser(identity, new LoadCallback<User>() {
             @Override
-            public void onSuccess(User data) {
+            public void onSuccess(@NotNull User data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -236,13 +237,13 @@ public class RxCxense {
     public static Single<User> getUser(@NonNull UserIdentity identity, List<String> groups, Boolean recent, List<String> identityTypes) {
         return Single.create(emitter -> CxenseSdk.getInstance().getUser(identity, groups, recent, identityTypes, new LoadCallback<User>() {
             @Override
-            public void onSuccess(User data) {
+            public void onSuccess(@NotNull User data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -258,13 +259,13 @@ public class RxCxense {
     public static Single<List<UserExternalData>> getUserExternalData(@NonNull String type) {
         return Single.create(emitter -> CxenseSdk.getInstance().getUserExternalData(type, new LoadCallback<List<UserExternalData>>() {
             @Override
-            public void onSuccess(List<UserExternalData> data) {
+            public void onSuccess(@NotNull List<UserExternalData> data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -281,13 +282,13 @@ public class RxCxense {
     public static Single<List<UserExternalData>> getUserExternalData(String id, @NonNull String type) {
         return Single.create(emitter -> CxenseSdk.getInstance().getUserExternalData(id, type, new LoadCallback<List<UserExternalData>>() {
             @Override
-            public void onSuccess(List<UserExternalData> data) {
+            public void onSuccess(@NotNull List<UserExternalData> data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -303,13 +304,13 @@ public class RxCxense {
     public static Completable setUserExternalData(@NonNull UserExternalData userExternalData) {
         return Completable.create(emitter -> CxenseSdk.getInstance().setUserExternalData(userExternalData, new LoadCallback<Void>() {
             @Override
-            public void onSuccess(Void data) {
+            public void onSuccess(@NotNull Void data) {
                 emitter.onComplete();
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -325,13 +326,13 @@ public class RxCxense {
     public static Completable deleteUserExternalData(@NonNull UserIdentity identity) {
         return Completable.create(emitter -> CxenseSdk.getInstance().deleteUserExternalData(identity, new LoadCallback<Void>() {
             @Override
-            public void onSuccess(Void data) {
+            public void onSuccess(@NotNull Void data) {
                 emitter.onComplete();
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -348,13 +349,13 @@ public class RxCxense {
     public static Single<UserIdentity> getUserExternalLink(@NonNull String cxenseId, @NonNull String type) {
         return Single.create(emitter -> CxenseSdk.getInstance().getUserExternalLink(cxenseId, type, new LoadCallback<UserIdentity>() {
             @Override
-            public void onSuccess(UserIdentity data) {
+            public void onSuccess(@NotNull UserIdentity data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -368,16 +369,16 @@ public class RxCxense {
      */
     @SuppressWarnings({"UnusedDeclaration", "WeakerAccess"}) // Public API.
     @NonNull
-    public static Single<UserIdentity> setUserExternalLink(@NonNull String cxenseId, @NonNull UserIdentity identity) {
-        return Single.create(emitter -> CxenseSdk.getInstance().setUserExternalLink(cxenseId, identity, new LoadCallback<UserIdentity>() {
+    public static Single<UserIdentity> addUserExternalLink(@NonNull String cxenseId, @NonNull UserIdentity identity) {
+        return Single.create(emitter -> CxenseSdk.getInstance().addUserExternalLink(cxenseId, identity, new LoadCallback<UserIdentity>() {
             @Override
-            public void onSuccess(UserIdentity data) {
+            public void onSuccess(@NotNull UserIdentity data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
@@ -427,8 +428,8 @@ public class RxCxense {
      */
     @SuppressWarnings({"UnusedDeclaration", "WeakerAccess"}) // Public API.
     @NonNull
-    public static Single<ContentUser> getDefaultUser() {
-        return Single.fromCallable(() -> CxenseSdk.getInstance().getDefaultUser());
+    public static Single<ContentUser> getDefaultContentUser() {
+        return Single.fromCallable(() -> CxenseSdk.getInstance().getDefaultContentUser());
     }
 
     /**
@@ -469,7 +470,7 @@ public class RxCxense {
     }
 
     /**
-     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in {@link CxenseConstants}
+     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in Cxense constants
      *
      * @param url               API endpoint
      * @param persistentQueryId query id
@@ -481,19 +482,19 @@ public class RxCxense {
     public <T> Single<T> getPersistedQuerySingle(String url, String persistentQueryId) {
         return Single.create(emitter -> CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, new LoadCallback<T>() {
             @Override
-            public void onSuccess(T data) {
+            public void onSuccess(@NotNull T data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
 
     /**
-     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in {@link CxenseConstants}
+     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in Cxense constants
      *
      * @param url               API endpoint
      * @param persistentQueryId query id
@@ -504,19 +505,19 @@ public class RxCxense {
     public Completable getPersistedQueryCompletable(String url, String persistentQueryId) {
         return Completable.create(emitter -> CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, new LoadCallback<Void>() {
             @Override
-            public void onSuccess(Void data) {
+            public void onSuccess(@NotNull Void data) {
                 emitter.onComplete();
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
 
     /**
-     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in {@link CxenseConstants}
+     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in Cxense constants
      *
      * @param url               API endpoint
      * @param persistentQueryId query id
@@ -529,19 +530,19 @@ public class RxCxense {
     public <T> Single<T> getPersistedQuerySingle(String url, String persistentQueryId, Object data) {
         return Single.create(emitter -> CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, data, new LoadCallback<T>() {
             @Override
-            public void onSuccess(T data) {
+            public void onSuccess(@NotNull T data) {
                 emitter.onSuccess(data);
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }
 
     /**
-     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in {@link CxenseConstants}
+     * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in Cxense constants
      *
      * @param url               API endpoint
      * @param persistentQueryId query id
@@ -553,13 +554,13 @@ public class RxCxense {
     public Completable getPersistedQueryCompletable(String url, String persistentQueryId, Object data) {
         return Completable.create(emitter -> CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, data, new LoadCallback<Void>() {
             @Override
-            public void onSuccess(Void data) {
+            public void onSuccess(@NotNull Void data) {
                 emitter.onComplete();
             }
 
             @Override
-            public void onError(Throwable throwable) {
-                emitter.onError(throwable);
+            public void onError(@NotNull Throwable throwable) {
+                emitter.tryOnError(throwable);
             }
         }));
     }

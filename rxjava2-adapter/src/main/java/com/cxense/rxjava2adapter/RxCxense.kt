@@ -1,6 +1,8 @@
 package com.cxense.rxjava2adapter
 
-import com.cxense.cxensesdk.*
+import com.cxense.cxensesdk.CxenseConfiguration
+import com.cxense.cxensesdk.CxenseSdk
+import com.cxense.cxensesdk.LoadCallback
 import com.cxense.cxensesdk.model.*
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -29,26 +31,21 @@ fun trackClick(item: WidgetItem): Completable =
     }
 
 /**
- * Fetch async a list of {@link com.cxense.cxensesdk.model.WidgetItem items} for the given {@link WidgetContext} and widget id
- *
- * @param widgetId      the widget id
- * @param widgetContext the WidgetContext
- * @return a {@link Single} that emits list of widgets
- */
-fun loadWidgetRecommendations(widgetId: String, widgetContext: WidgetContext): Single<List<WidgetItem>> =
-    createSingle { loadCallback ->
-        CxenseSdk.getInstance().loadWidgetRecommendations(widgetId, widgetContext, loadCallback)
-    }
-
-/**
  * @param widgetId      the widget id
  * @param widgetContext the WidgetContext
  * @param user          custom user
  * @return a {@link Single} that emits list of widgets
  */
-fun loadWidgetRecommendations(widgetId: String, widgetContext: WidgetContext, user: ContentUser?, tag: String?, prnd: String?): Single<List<WidgetItem>> =
+fun loadWidgetRecommendations(
+    widgetId: String,
+    widgetContext: WidgetContext,
+    user: ContentUser? = null,
+    tag: String? = null,
+    prnd: String? = null
+): Single<List<WidgetItem>> =
     createSingle { loadCallback ->
-        CxenseSdk.getInstance().loadWidgetRecommendations(widgetId, widgetContext, user, tag, prnd, loadCallback)
+        CxenseSdk.getInstance()
+            .loadWidgetRecommendations(widgetId, widgetContext, user, tag, prnd, loadCallback)
     }
 
 /**
@@ -70,7 +67,7 @@ fun getUserId(): Single<String> =
  */
 fun setUserId(id: String): Completable =
     Completable.fromAction {
-        CxenseSdk.getInstance().setUserId(id)
+        CxenseSdk.getInstance().userId = id
     }
 
 /**
@@ -91,7 +88,7 @@ fun getDefaultUserId(): Single<String> =
  */
 fun isLimitAdTrackingEnabled(): Single<Boolean> =
     Single.fromCallable {
-        CxenseSdk.getInstance().isLimitAdTrackingEnabled
+        CxenseSdk.getInstance().limitAdTrackingEnabled
     }
 
 /**
@@ -111,20 +108,12 @@ fun getConfiguration(): Single<CxenseConfiguration> =
  * @param siteGroupIds the collection of site groups to retrieve segments for
  * @return a {@link Single} that emits list of user segment ids
  */
-fun getUserSegmentIds(identities: Collection<UserIdentity>, siteGroupIds: Collection<String>): Single<List<String>> =
+fun getUserSegmentIds(
+    identities: List<UserIdentity>,
+    siteGroupIds: List<String>
+): Single<List<String>> =
     createSingle { loadCallback ->
         CxenseSdk.getInstance().getUserSegmentIds(identities, siteGroupIds, loadCallback)
-    }
-
-/**
- * Asynchronously retrieves a suitably authorized slice of a given user's interest profile
- *
- * @param identity user identifier with type and id
- * @return a {@link Single} that emits an {@link User} object
- */
-fun getUser(identity: UserIdentity): Single<User> =
-    createSingle { loadCallback ->
-        CxenseSdk.getInstance().getUser(identity, loadCallback)
     }
 
 /**
@@ -139,20 +128,14 @@ fun getUser(identity: UserIdentity): Single<User> =
  *                      the user, it will be included in the response
  * @return a {@link Single} that emits an {@link User} object
  */
-fun getUser(identity: UserIdentity, groups: Collection<String>?, recent: Boolean?, identityTypes: Collection<String>?): Single<User> =
+fun getUser(
+    identity: UserIdentity,
+    groups: List<String>? = null,
+    recent: Boolean? = null,
+    identityTypes: List<String>? = null
+): Single<User> =
     createSingle { loadCallback ->
         CxenseSdk.getInstance().getUser(identity, groups, recent, identityTypes, loadCallback)
-    }
-
-/**
- * Asynchronously retrieves the external data associated with a given user type
- *
- * @param type the customer identifier type
- * @return a {@link Single} that emits list of {@link UserExternalData} objects
- */
-fun getUserExternalData(type: String): Single<List<UserExternalData>> =
-    createSingle { loadCallback ->
-        CxenseSdk.getInstance().getUserExternalData(type, loadCallback)
     }
 
 /**
@@ -160,11 +143,16 @@ fun getUserExternalData(type: String): Single<List<UserExternalData>> =
  *
  * @param id   identifier for the user. Use 'null' if you want match all users of provided type.
  * @param type the customer identifier type
+ * @param filter a traffic filter of type user-external with required group and optional item/items specified
  * @return a {@link Single} that emits list of {@link UserExternalData} objects
  */
-fun getUserExternalData(id: String?, type: String): Single<List<UserExternalData>> =
+fun getUserExternalData(
+    type: String,
+    id: String? = null,
+    filter: String? = null
+): Single<List<UserExternalData>> =
     createSingle { loadCallback ->
-        CxenseSdk.getInstance().getUserExternalData(id, type, loadCallback)
+        CxenseSdk.getInstance().getUserExternalData(type, id, filter, loadCallback)
     }
 
 /**
@@ -208,9 +196,9 @@ fun getUserExternalLink(cxenseId: String, type: String): Single<UserIdentity> =
  * @param identity user identifier with type and id
  * @return a {@link Single} that emits an {@link UserIdentity} object
  */
-fun setUserExternalLink(cxenseId: String, identity: UserIdentity): Single<UserIdentity> =
+fun addUserExternalLink(cxenseId: String, identity: UserIdentity): Single<UserIdentity> =
     createSingle { loadCallback ->
-        CxenseSdk.getInstance().setUserExternalLink(cxenseId, identity, loadCallback)
+        CxenseSdk.getInstance().addUserExternalLink(cxenseId, identity, loadCallback)
     }
 
 /**
@@ -253,9 +241,9 @@ fun trackActiveTime(eventId: String, activeTime: Long): Completable =
  *
  * @return a {@link Single} that emits the default {@link ContentUser}
  */
-fun getDefaultUser(): Single<ContentUser> =
+fun getDefaultContentUser(): Single<ContentUser> =
     Single.fromCallable {
-        CxenseSdk.getInstance().defaultUser
+        CxenseSdk.getInstance().defaultContentUser
     }
 
 /**
@@ -285,7 +273,10 @@ fun getQueueStatus(): Single<QueueStatus> =
  */
 fun getDispatchEventsStatuses(): Observable<List<EventStatus>> =
     Observable.create { emitter ->
-        CxenseSdk.getInstance().setDispatchEventsCallback(emitter::onNext)
+        CxenseSdk.getInstance()
+            .setDispatchEventsCallback(object : CxenseSdk.DispatchEventsCallback {
+                override fun onDispatch(statuses: List<EventStatus>) = emitter.onNext(statuses)
+            })
         emitter.setCancellable { CxenseSdk.getInstance().setDispatchEventsCallback(null) }
     }
 
@@ -294,36 +285,15 @@ fun getDispatchEventsStatuses(): Observable<List<EventStatus>> =
  *
  * @param url               API endpoint
  * @param persistentQueryId query id
- * @param <T>               response type
- * @return a {@link Single} that emits result of query
- */
-fun <T> getPersistedQuerySingle(url: String, persistentQueryId: String): Single<T> =
-    createSingle { loadCallback ->
-        CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, loadCallback)
-    }
-
-/**
- * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in {@link CxenseConstants}
- *
- * @param url               API endpoint
- * @param persistentQueryId query id
- * @return a {@link Completable} that is complete when the function finished successfully
- */
-fun getPersistedQueryCompletable(url: String, persistentQueryId: String): Completable =
-    createCompletable { loadCallback ->
-        CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, loadCallback)
-    }
-
-/**
- * Executes persisted query to Cxense API endpoint. You can find some popular endpoints in {@link CxenseConstants}
- *
- * @param url               API endpoint
- * @param persistentQueryId query id
  * @param data              data for sending as request body
  * @param <T>               response type
  * @return a {@link Single} that emits result of query
  */
-fun <T> getPersistedQuerySingle(url: String, persistentQueryId: String, data: Any?): Single<T> =
+fun <T : Any> getPersistedQuerySingle(
+    url: String,
+    persistentQueryId: String,
+    data: Any? = null
+): Single<T> =
     createSingle { loadCallback ->
         CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, data, loadCallback)
     }
@@ -336,12 +306,16 @@ fun <T> getPersistedQuerySingle(url: String, persistentQueryId: String, data: An
  * @param data              data for sending as request body
  * @return a {@link Completable} that is complete when the function finished successfully
  */
-fun getPersistedQueryCompletable(url: String, persistentQueryId: String, data: Any?): Completable =
+fun getPersistedQueryCompletable(
+    url: String,
+    persistentQueryId: String,
+    data: Any? = null
+): Completable =
     createCompletable { loadCallback ->
         CxenseSdk.getInstance().executePersistedQuery(url, persistentQueryId, data, loadCallback)
     }
 
-private fun <T> createSingle(func: (LoadCallback<T>) -> Unit): Single<T> =
+private fun <T : Any> createSingle(func: (LoadCallback<T>) -> Unit): Single<T> =
     Single.create { emitter ->
         func(object : LoadCallback<T> {
             override fun onSuccess(data: T) {
@@ -351,7 +325,6 @@ private fun <T> createSingle(func: (LoadCallback<T>) -> Unit): Single<T> =
             override fun onError(throwable: Throwable) {
                 emitter.tryOnError(throwable)
             }
-
         })
     }
 
@@ -365,6 +338,5 @@ private fun createCompletable(func: (LoadCallback<Void>) -> Unit): Completable =
             override fun onError(throwable: Throwable) {
                 emitter.tryOnError(throwable)
             }
-
         })
     }

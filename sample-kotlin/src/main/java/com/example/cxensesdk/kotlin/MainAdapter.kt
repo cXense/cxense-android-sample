@@ -4,27 +4,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.list_item.*
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.cxensesdk.kotlin.databinding.ListItemBinding
 
-/**
- * @author Dmitriy Konopelkin (dmitry.konopelkin@cxense.com) on (2017-06-05).
- */
-
-class MainAdapter(private val data: List<String>, private val clickListener: (String) -> Unit) : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
+class MainAdapter(
+    private val data: List<String>,
+    private val clickListener: (String) -> Unit
+) : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false))
+        ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.title.text = data[position]
+        holder.binding.title.text = data[position]
     }
 
     override fun getItemCount(): Int = data.size
 
-    inner class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    inner class ViewHolder(containerView: View) : RecyclerView.ViewHolder(containerView) {
+        val binding: ListItemBinding by viewBinding()
 
         init {
-            containerView.setOnClickListener {
+            binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     clickListener(data[position])
@@ -33,3 +33,4 @@ class MainAdapter(private val data: List<String>, private val clickListener: (St
         }
     }
 }
+

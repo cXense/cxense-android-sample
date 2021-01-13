@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.ItemC
                 showError(throwable);
             }
         });
-        cxenseSdk.getUserSegmentIds(identities, Collections.singletonList(BuildConfig.SITE_ID), new LoadCallback<List<String>>() {
+        cxenseSdk.getUserSegmentIds(identities, Collections.singletonList(BuildConfig.SITEGROUP_ID), new LoadCallback<List<String>>() {
             @Override
             public void onSuccess(@NotNull List<String> data) {
                 showText(TextUtils.join(" ", data));
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.ItemC
         });
 
         // read external data for user
-        cxenseSdk.getUserExternalData(id, type, new LoadCallback<List<UserExternalData>>() {
+        cxenseSdk.getUserExternalData(type, id, new LoadCallback<List<UserExternalData>>() {
             @Override
             public void onSuccess(@NotNull List<UserExternalData> data) {
                 showText(String.format(Locale.US, "We have %d items", data.size()));

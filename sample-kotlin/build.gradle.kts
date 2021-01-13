@@ -1,15 +1,8 @@
 import org.gradle.kotlin.dsl.implementation
-import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
 plugins {
     id(Plugins.androidApp)
     id(Plugins.kotlinAndroidApp)
-    id(Plugins.kotlinAndroidExtApp)
-}
-
-androidExtensions {
-    isExperimental = true
-    defaultCacheImplementation = CacheImplementation.SPARSE_ARRAY
 }
 
 android {
@@ -23,6 +16,7 @@ android {
         versionCode = Config.versionCode
         versionName = Config.versionName
 
+        buildConfigField("String", "SITEGROUP_ID", """"${Config.cxenseSiteGroupId}"""")
         buildConfigField("String", "SITE_ID", """"${Config.cxenseSiteId}"""")
         buildConfigField("String", "USERNAME", """"${Config.cxenseUser}"""")
         buildConfigField("String", "API_KEY", """"${Config.cxenseApiKey}"""")
@@ -40,13 +34,17 @@ android {
         sourceCompatibility = Config.compileSourceVersion
         targetCompatibility = Config.compileTargetVersion
     }
-
-
+    buildFeatures {
+        viewBinding = true
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
-    implementation(kotlin(Libs.kotlinStdlib, Versions.kotlin))
     implementation(Libs.appcompat)
     implementation(Libs.material)
+    implementation(Libs.viewBindingProperty)
     implementation(Libs.cxenseSdk)
 }

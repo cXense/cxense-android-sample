@@ -7,18 +7,21 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
-    private List<String> data;
-    private ItemClickListener clickListener;
+    private final List<String> data;
+    private final ItemClickListener clickListener;
 
     public MainAdapter(String[] data, ItemClickListener clickListener) {
         this.data = Arrays.asList(data);
         this.clickListener = clickListener;
     }
 
+    @NotNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);

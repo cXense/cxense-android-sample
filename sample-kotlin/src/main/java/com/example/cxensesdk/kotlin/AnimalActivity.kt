@@ -2,21 +2,30 @@ package com.example.cxensesdk.kotlin
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.cxense.cxensesdk.CxenseSdk
 import com.cxense.cxensesdk.LoadCallback
-import com.cxense.cxensesdk.model.*
+import com.cxense.cxensesdk.model.ConversionEvent
+import com.cxense.cxensesdk.model.CustomParameter
+import com.cxense.cxensesdk.model.EventStatus
+import com.cxense.cxensesdk.model.Impression
+import com.cxense.cxensesdk.model.PageViewEvent
+import com.cxense.cxensesdk.model.PerformanceEvent
+import com.cxense.cxensesdk.model.UserIdentity
+import com.cxense.cxensesdk.model.WidgetContext
+import com.cxense.cxensesdk.model.WidgetItem
+import com.example.cxensesdk.kotlin.databinding.ActivityAnimalBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_animal.*
 import timber.log.Timber
 
-class AnimalActivity : AppCompatActivity() {
+class AnimalActivity : AppCompatActivity(R.layout.activity_animal) {
+    private val binding: ActivityAnimalBinding by viewBinding(R.id.animalText)
     private lateinit var item: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_animal)
         item = intent.getStringExtra(ITEM_KEY) ?: ""
-        animalText.text = getString(R.string.item_text, item)
+        binding.animalText.text = getString(R.string.item_text, item)
     }
 
     override fun onPause() {
@@ -27,17 +36,27 @@ class AnimalActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        CxenseSdk.getInstance().setDispatchEventsCallback(object : CxenseSdk.DispatchEventsCallback {
-            override fun onDispatch(statuses: List<EventStatus>) {
-                val grouped = statuses.groupBy { it.isSent }
-                val message = "Sent: '${grouped[true]?.asString()}'\nNot sent: '${grouped[false]?.asString()}'"
-                Snackbar.make(animalText, message, Snackbar.LENGTH_LONG).show()
+        CxenseSdk.getInstance().setDispatchEventsCallback(
+            object : CxenseSdk.DispatchEventsCallback {
+                override fun onDispatch(statuses: List<EventStatus>) {
+                    val grouped = statuses.groupBy { it.isSent }
+                    val message =
+                        """
+                        Sent: '${grouped[true]?.joinToString { it.eventId ?: "" }}'
+                        Not sent: '${grouped[false]?.joinToString { it.eventId ?: "" }}'
+                        """.trimIndent()
+                    Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+                }
             }
-
-        })
+        )
         CxenseSdk.getInstance().pushEvents(
             PageViewEvent.Builder(BuildConfig.SITE_ID)
                 .contentId(item)
+                .eventId(item)
+                .addCustomParameters(CustomParameter("cxd-item", item))
+                .build(),
+            PerformanceEvent.Builder(BuildConfig.SITE_ID, "cxd-app", "view")
+                .addIdentities(UserIdentity("cxd", "value"))
                 .eventId(item)
                 .addCustomParameters(CustomParameter("xyz-item", item))
                 .build(),
@@ -45,7 +64,7 @@ class AnimalActivity : AppCompatActivity() {
                 BuildConfig.SITE_ID,
                 "0ab24abee9a85d869b29f46c837144",
                 ConversionEvent.FUNNEL_TYPE_CONVERT_PRODUCT,
-                mutableListOf(UserIdentity("123456", "cxd"))
+                mutableListOf(UserIdentity("cxd", "123456"))
             )
                 .productPrice(12.25)
                 .renewalFrequency("1wC")
@@ -56,29 +75,26 @@ class AnimalActivity : AppCompatActivity() {
             WidgetContext.Builder("https://cxense.com").build(),
             callback = object : LoadCallback<List<WidgetItem>> {
                 override fun onSuccess(data: List<WidgetItem>) {
-                    data.mapNotNull { it.clickUrl }
-                        .mapIndexed { index, url -> Impression(url, index) }
-                        .takeIf { it.isNotEmpty() }
-                        ?.let {
-                            CxenseSdk.getInstance().reportWidgetVisibilities(
-                                object : LoadCallback<Any> {
-                                    override fun onSuccess(data: Any) {
-                                        Timber.d("Success")
-                                    }
+                    CxenseSdk.getInstance().reportWidgetVisibilities(
+                        object : LoadCallback<Any> {
+                            override fun onSuccess(data: Any) {
+                                Timber.d("Success")
+                            }
 
-                                    override fun onError(throwable: Throwable) {
-                                        Timber.e(throwable)
-                                    }
-                                },
-                                *it.toTypedArray()
-                            )
-                        }
+                            override fun onError(throwable: Throwable) {
+                                Timber.e(throwable)
+                            }
+                        },
+                        Impression(data[0].clickUrl ?: "", 1),
+                        Impression(data[1].clickUrl ?: "", 2)
+                    )
                 }
 
                 override fun onError(throwable: Throwable) {
                     Timber.e(throwable)
                 }
-            })
+            }
+        )
     }
 
     companion object {

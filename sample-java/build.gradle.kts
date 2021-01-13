@@ -13,6 +13,7 @@ android {
         versionCode = Config.versionCode
         versionName = Config.versionName
 
+        buildConfigField("String", "SITEGROUP_ID", """"${Config.cxenseSiteGroupId}"""")
         buildConfigField("String", "SITE_ID", """"${Config.cxenseSiteId}"""")
         buildConfigField("String", "USERNAME", """"${Config.cxenseUser}"""")
         buildConfigField("String", "API_KEY", """"${Config.cxenseApiKey}"""")

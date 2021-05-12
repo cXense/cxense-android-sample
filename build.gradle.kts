@@ -7,7 +7,7 @@ plugins {
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
 
     }
 
@@ -25,7 +25,7 @@ buildScan {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven("https://jitpack.io")
     }
 }

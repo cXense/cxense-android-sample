@@ -20,18 +20,18 @@ object Config {
 }
 
 object Versions {
-    const val kotlin = "1.4.21-2"
+    const val kotlin = "1.4.32"
     //Plugins
     const val versionsPlugin = "0.36.0"
-    const val androidToolsPlugin = "4.1.1"
+    const val androidToolsPlugin = "4.2.0"
     // Android libraries
     const val compatLibrary = "1.2.0"
-    const val materialLibrary = "1.2.1"
+    const val materialLibrary = "1.3.0"
 
-    const val cxenseSdk = "2.0.1"
-    const val rxJava = "2.2.20"
+    const val cxenseSdk = "2.0.2"
+    const val rxJava = "2.2.21"
     const val kotlinCoroutines = "1.4.2"
-    const val viewBindingProperty = "1.4.1"
+    const val viewBindingProperty = "1.4.6"
 }
 
 object Plugins {
@@ -49,5 +49,5 @@ object Libs {
     const val cxenseSdk = "com.cxpublic:cxense-android:${Versions.cxenseSdk}"
     const val rxJava = "io.reactivex.rxjava2:rxjava:${Versions.rxJava}"
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinCoroutines}"
-    const val viewBindingProperty = "com.kirich1409.viewbindingpropertydelegate:viewbindingpropertydelegate:${Versions.viewBindingProperty}"
+    const val viewBindingProperty = "com.github.kirich1409:viewbindingpropertydelegate:${Versions.viewBindingProperty}"
 }
